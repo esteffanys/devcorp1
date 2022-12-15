@@ -1,4 +1,5 @@
 const express = require('express')
+const cors = require('cors')
 const app = express()
 
 //conecao de banco 
@@ -14,18 +15,24 @@ const conexao = new mssql.ConnectionPool({
 
 
 app.use(express.json());
+app.use(cors());
 app.get('/', (req, res) => {
     res.send('Hello world!');
 })
+
 //mostrar os correntistas 
 app.get('/inicio', (req,res) => {
+    console.log('ok')
     conexao.connect().then((pool) => {
-        const sql = 'SELECT * FROM Correntistas'
+        const sql = 'SELECT * FROM correntistas'
         pool.query(sql).then((rows) => {
+            console.log('ok2')
+            console.log(rows)
             res.send(rows.recordset)
         })
     })
 })
+
 //exacutar deposito
 app.post('/Deposito', (req,res) => {
     const codigo = '\''+ req.body.CodigoCorrentista +'\'';
@@ -47,6 +54,7 @@ app.get('/movimentacao', (req,res) => {
         })
     })
 })
+
 //executar saque
 app.post('/saque', (req,res) => {
     const codigo = '\''+ req.body.CodigoCorrentista +'\'';
